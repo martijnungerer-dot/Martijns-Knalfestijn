@@ -13,7 +13,9 @@ Dit project is een mobiele spelhost voor een zelfstandig begeleide training van 
 - `scripts/offline-runtime.js` zorgt voor lokale demo-opslag en pictogrammen.
 - De demo simuleert medespelers en gebruikt timers van 10, 5 en 8 seconden. Dit is geen server of echte groepssessie.
 - `tests/flow.test.cjs` controleert prototypegedrag met een gesimuleerde klok. Het zijn geen browser-, audio- of samenspeltests.
-- De mappen voor de voorgestelde productiearchitectuur bestaan nog niet. Maak ze pas bij de bijbehorende taak.
+- Gedeelde ronde (mijlpaal 1): `packages/game/engine.mjs` (spelregels, krijgt tijd als invoer), `apps/server/` (Node-HTTP, SSE, toestand in het geheugen), `apps/web/` (telefoonpagina zonder bouwstap) en `content/examples/ronde.json` (fictieve voorbeeldinhoud). Nog zonder externe pakketten; React/Fastify/SQLite uit `ARCHITECTUUR.md` zijn nog niet ingevoerd.
+- `tests/integration/` start de echte server met een nagemaakte klok en speelt met meerdere deelnemers via HTTP.
+- Overige mappen uit de voorgestelde architectuur bestaan nog niet. Maak ze pas bij de bijbehorende taak.
 
 ## Productregels
 
@@ -36,7 +38,8 @@ De huidige scripts hebben Node.js 22 of nieuwer nodig en vereisen geen pakketins
 ```sh
 npm run build
 npm test
-npm run dev
+npm run dev     # prototype op poort 4173
+npm start       # gedeelde-rondeserver op poort 3000 (PORT, HOST, ADMIN_KEY optioneel)
 ```
 
 Na aanpassingen aan de bron: export opnieuw bouwen en de relevante tests uitvoeren. Werk instructies, lockfile en commando's bij zodra echte dependencies of de nieuwe applicaties worden toegevoegd. Voeg geen lege productiecomponenten toe om voortgang te suggereren.

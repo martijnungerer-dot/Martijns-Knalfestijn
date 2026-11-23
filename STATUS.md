@@ -2,40 +2,58 @@
 
 ## Werkend
 
-- Zelfstandig, offline te openen mobiel prototype in `index.html`.
-- Lange kaart, aanklikbare finalevoorbeelden en zichtbare eindrichtingen.
-- Puzzel, routekeuze, automatische timeouts en een oefenscherm dat vanzelf sluit.
-- Poppetjes met schermnamen, kleur en voorwerpen, ranglijst, munten en winkelstop.
-- Eén voorbeeldsidequest; onbekende bedrijfsinhoud is als invulplek gemarkeerd.
-- Zeven automatische controles van het prototypegedrag.
-- Volledige productprompt, architectuurplan, testplanning en gedeelde instructies voor Codex en Claude.
+### Gedeelde ronde (mijlpaal 1, branch `claude/gallant-clarke-ju7y51`)
 
-## Nog niet gebouwd
+- `npm start` draait een server. Op `/` maak je een sessie (eventueel met demotijden 20/10/15 s). De maker krijgt de startknop en een deellink `/s/CODE` met een onvoorspelbare code van acht tekens.
+- Meedoen met schermnaam en shirtkleur. De server geeft een anonieme identiteit in een HttpOnly-cookie. Een dubbele naam wordt geweigerd. Meedoen na de start kan niet.
+- Starten kan alleen met het beheertoken van de maker.
+- De server legt de deadlines als vaste tijdstippen vast: puzzel 60 s, keuzetijdvak 30 s, oefenblok 2 min. Interacties verlengen niets.
+- Eén puzzel (twee getallen die samen 10 maken) met maximaal 3 pogingen. De antwoordsleutel blijft op de server.
+- De eerste juiste inzending wint, op volgorde van ontvangst door de server. Goed geeft 1 punt en 10 munten. De winnaar krijgt daarnaast een rondewinst en 5 munten.
+- De winnaar ziet meteen twee blokken en heeft 30 seconden om te kiezen. Anderen zien "Nina kiest" en kunnen hun puzzelminuut afmaken.
+- Kiest de winnaar niet, of wint niemand? Dan kiest het systeem de eerste optie. De winnaar blijft voorop lopen.
+- Alle telefoons krijgen via een eventstream (SSE) dezelfde fase, winnaar en route. De klok telt af vanaf de servertijd. Het oefenscherm vult het scherm en sluit vanzelf. Daarna verschijnt de eindstand.
+- Na herladen sluit een telefoon weer aan op dezelfde deelnemer, fase en score. Bij verbindingsverlies verschijnt "Verbinding herstellen…".
+- De prototypebron en de export `index.html` zijn ongewijzigd.
 
-De server, gezamenlijke sessies, echte groepsstemming, gedeelde klok, geldige anonieme identiteit, beheer, QR-check-in, scores en aankopen op de server, boomboxregie, echte muziek, een trainingsprogramma van een uur en betrouwbare hervatting na onderbrekingen.
+### Prototype
 
-De prototypewinkelaankopen tonen alleen een bevestiging. Ze starten geen muziek en veranderen nog geen echte oefening. De finale-inhoud en deelnemers zijn voorbeelden. De verkorte tijden zijn uitsluitend voor de demo.
+- Zelfstandig, offline te openen mobiel prototype in `index.html`, met kaart, finales, winkel, sidequest en poppetjes. Het blijft de referentie voor beleving en vormgeving.
 
-## Huidige bouwcontrole
+## Getest
+
+- `npm test`: 7 prototypecontroles en 9 integratietests tegen de echte server, met drie deelnemers en een nagemaakte klok. Ze dekken:
+  - een volledige ronde: één goed, één fout, één herlaadt
+  - dubbele inzending met dezelfde actie-id, en opnieuw oplossen
+  - twee gelijktijdige goede antwoorden: precies één winnaar
+  - het maximum aantal pogingen
+  - een timeout zonder winnaar
+  - een winnaar die niet kiest, zonder dat deadlines verschuiven
+  - een onbevoegde blokkeuze (geen winnaar, andere speler, zonder cookie, onbekend blok)
+  - starten zonder token en het overnemen van een naam
+  - de eventstream
+- Browsercontrole met Playwright: drie losse iPhone-browsers spelen een complete demoronde, inclusief een fout antwoord, herladen tijdens de puzzel, winnaarskeuze, oefenscherm en eindstand. Iedereen zag dezelfde uitkomst, zonder scriptfouten. Dit script staat niet in de repository.
+
+## Nog niet gebouwd of getest
+
+- **Niet op echte telefoons of via een netwerk getest.** Er is ook geen hosting of testlink.
+- Herstel na een **serverherstart**: de toestand staat alleen in het geheugen (mijlpaal 2, met SQLite).
+- Meer dan één ronde, startstemming, routegraaf, finales, uurindeling van 60 minuten, winkel, veto's, sidequests, geluidstelefoon, beheeromgeving en avatarvoorwerpen.
+- React/Vite/Fastify zijn bewust nog niet ingevoerd. De ronde draait op Node 22 zonder pakketten.
+- Een late deelnemer, of iemand die zijn cookie kwijt is, kan na de start niet meer meedoen.
+- Puzzelinhoud en oefeningen zijn fictieve voorbeelden.
+
+## Bouwcontrole
 
 ```sh
 npm run build
 npm test
+npm start
 ```
-
-Zeven prototypecontroles slagen. Er is nog geen volledige browserrepetitie, netwerktest op meerdere telefoons of uurtraining uitgevoerd. GitHub/Claude-toegang en een productiedeployment zijn geen gevolg van deze testuitslag.
 
 ## Eerstvolgende taak
 
-**Mijlpaal 1: één gedeelde ronde op drie telefoons.**
-
-1. Werk de voorgestelde mapstructuur uit zonder de werkende demo kwijt te raken.
-2. Voeg een sessie aanmaken en toetreden met schermnaam toe.
-3. Bouw servertoestand, actuele snapshot, eventstream en centrale deadlines.
-4. Koppel één puzzel, winnaar, twee blokkeuzes en een oefenvenster.
-5. Test correcte/incorrecte antwoorden, timeouts en herladen met drie browsers.
-
-Af wanneer iedereen dezelfde fase, winnaar en route ziet en de ronde zonder handmatig ingrijpen verderloopt. Dit is de prioriteit vóór extra puzzelvormen, outfits of zijmissies.
+**Mijlpaal 2: herstel.** Toestand en actie-ids opslaan, zodat een serverherstart, netwerkverlies en dubbele acties geen andere score of extra tijd geven. Daarna een eerste test op drie echte telefoons via een tijdelijke host.
 
 ## Openstaande inhoudskeuzes voor Martijn
 
@@ -45,5 +63,6 @@ Af wanneer iedereen dezelfde fase, winnaar en route ziet en de ronde zonder hand
 - Muziekbron, nummers en vooraf vastgelegde hostteksten of opnames.
 - Collega-uitspraken en gecontroleerde antwoorden voor bedrijfs-sidequests.
 - Kerstweekdata, inschrijfsluiting, einde deelname en gegevensverwijdering.
+- Hosting voor de testlink (een dienst met één Node-proces en, vanaf mijlpaal 2, blijvende opslag).
 
 Deze inhoudskeuzes blokkeren de bouw van de centrale sessielogica niet.

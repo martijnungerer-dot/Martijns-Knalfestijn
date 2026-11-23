@@ -1,0 +1,18 @@
+{
+  "version": "voorbeeld-1",
+  "_let_op": "Fictieve voorbeeldinhoud. Martijn stelt de echte puzzels en oefeningen vast.",
+  "puzzle": {
+    "id": "som-10",
+    "kind": "pick",
+    "prompt": "Kies twee getallen. Maak samen 10.",
+    "options": [4, 8, 6, 9],
+    "pick": 2,
+    "answer": [4, 6]
+  },
+  "blocks": [
+    { "id": "row", "name": "Roeien", "work": "40 sec werk / 20 sec rust" },
+    { "id": "swing", "name": "Kettlebell swing", "work": "3 × 15 herhalingen" }
+  ],
+  "durations": { "puzzle": 60000, "choice": 30000, "exercise": 120000 },
+  "demoDurations": { "puzzle": 20000, "choice": 10000, "exercise": 15000 }
+}
