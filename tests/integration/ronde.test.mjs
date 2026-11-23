@@ -238,3 +238,28 @@ test('met beheersleutel: sessie maken alleen met de juiste sleutel', async t => 
   assert.equal(await make({ 'X-Admin-Key': 'fout' }), 403);
   assert.equal(await make({ 'X-Admin-Key': 'geheim' }), 201);
 });
+
+test('herhaald join-verzoek met dezelfde actie-id geeft dezelfde identiteit terug', async t => {
+  const g = await setup(t);
+  const actionId = randomUUID();
+  const first = await g.call('POST', `/api/sessions/${g.code}/join`, { actionId, name: 'Nina' });
+  const retry = await g.call('POST', `/api/sessions/${g.code}/join`, { actionId, name: 'Nina' }); // cookie kwam niet aan
+  assert.equal(retry.status, 200);
+  const view = c => g.call('GET', `/api/sessions/${g.code}/state`, undefined, { Cookie: c }).then(x => x.body.me.id);
+  assert.equal(await view(retry.cookie), await view(first.cookie));
+  assert.equal((await g.call('POST', `/api/sessions/${g.code}/join`, { actionId: randomUUID(), name: 'Nina' })).body.code, 'name_taken');
+  assert.equal((await g.call('GET', `/api/sessions/${g.code}/state`)).body.players.length, 1);
+});
+
+test('geweigerde actie-id blijft na herstart geweigerd', async t => {
+  const g = await setup(t);
+  const [nina, sem] = [await g.player('Nina'), await g.player('Sem')];
+  await g.start();
+  const early = randomUUID();
+  assert.equal((await sem.choose('swing', early)).body.code, 'not_winner'); // nog geen winnaar
+  await sem.answer(RIGHT); // Sem wint nu wel
+  await g.restart(1_000);
+  assert.equal((await sem.choose('swing', early)).body.code, 'not_winner', 'zelfde id, zelfde uitkomst');
+  assert.equal((await nina.state()).round.chosenBlockId, null);
+  assert.equal((await sem.choose('swing')).status, 200, 'een nieuwe id mag wel');
+});

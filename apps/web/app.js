@@ -186,7 +186,7 @@ $('[data-submit]').onclick = async () => {
 $('[data-join-form]').onsubmit = async e => {
   e.preventDefault();
   const form = new FormData(e.target);
-  const result = await post(`/${code}/join`, { name: form.get('name'), color: form.get('color') });
+  const result = await post(`/${code}/join`, { actionId: crypto.randomUUID(), name: form.get('name'), color: form.get('color') });
   $('[data-join-error]').textContent = result.ok ? '' : result.message;
   if (result.ok) connect(); // opnieuw verbinden zodat de stroom de eigen deelname kent
 };

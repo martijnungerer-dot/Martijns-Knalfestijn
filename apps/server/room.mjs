@@ -110,20 +110,29 @@ export class Room {
     if (request.method !== 'POST') return json(404, { code: 'not_found' });
     const body = await readJson(request);
     if (!body) return json(415, { code: 'json_required' });
+    const knownActions = Object.keys(s.actions).length;
     const finish = async (result, headers) => {
       if (result.ok) await this.commit();
+      // Ook een geweigerde actie-id bewaren: na een herstart moet dezelfde id dezelfde uitkomst geven.
+      else if (Object.keys(s.actions).length !== knownActions) await this.storage.save(this.record);
       return json(result.ok ? 200 : result.status, { ...result, revision: s.revision }, headers);
     };
 
     if (action === 'join') {
       if (viewerId) return json(200, { ok: true, revision: s.revision }); // al deelnemer
+      const secure = new URL(request.url).protocol === 'https:' ? '; Secure' : '';
+      const setCookie = t => ({ 'Set-Cookie': `${cookieName}=${t}; HttpOnly; SameSite=Lax; Path=/; Max-Age=14400${secure}` });
+      // Een herhaald join-verzoek (cookie kwam niet aan) met dezelfde geheime actie-id krijgt dezelfde identiteit terug.
+      const joins = (this.record.joins ??= {});
+      const joinKey = typeof body.actionId === 'string' && body.actionId.length >= 16 && body.actionId.length <= 64 ? body.actionId : null;
+      if (joinKey && joins[joinKey]) return json(200, { ok: true, revision: s.revision }, setCookie(joins[joinKey]));
       const participantId = crypto.randomUUID();
       const result = game.join(s, { participantId, name: body.name, color: body.color });
       if (!result.ok) return finish(result);
       const t = token();
       this.record.tokens[t] = participantId;
-      const secure = new URL(request.url).protocol === 'https:' ? '; Secure' : '';
-      return finish(result, { 'Set-Cookie': `${cookieName}=${t}; HttpOnly; SameSite=Lax; Path=/; Max-Age=14400${secure}` });
+      if (joinKey) joins[joinKey] = t;
+      return finish(result, setCookie(t));
     }
     if (action === 'start') {
       if (!safeEqual(request.headers.get('x-admin-token'), this.record.adminToken))
