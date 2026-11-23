@@ -1,0 +1,368 @@
+<div id="knal-route-v2" class="viz-dotted-background">
+ <div class="kr-phone">
+  <div data-background>
+   <header class="kr-header"><div><span>MARTIJNS</span><strong>KNALFEEST</strong></div><div class="kr-tools"><button type="button" data-info aria-label="Spelregels en puntentelling"><i data-lucide="info" aria-hidden="true"></i></button><button type="button" data-edit aria-label="Maak jouw poppetje persoonlijk"><i data-lucide="user-round-pen" aria-hidden="true"></i></button></div></header>
+   <div class="kr-ranking" aria-label="Ranglijst op totaalpunten" data-ranking></div>
+   <div class="kr-meta"><span data-world>KRACHT · RONDE 2</span><button type="button" data-main>Start</button><span data-coins>● 30</span></div>
+   <div class="kr-map" aria-label="De groep volgt samen een route van boven naar beneden">
+    <div class="kr-cloud kr-c1" aria-hidden="true"></div><div class="kr-cloud kr-c2" aria-hidden="true"></div>
+    <svg class="kr-roads" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M50 0 V13 Q50 16 39 20 L25 25 V32 Q25 36 38 39 L50 42 M50 13 Q50 16 61 20 L75 25 V32 Q75 36 62 39 L50 42 M50 42 V46 Q50 49 38 53 L25 58 V65 Q25 68 38 70 L50 73 M50 46 Q50 49 62 53 L75 58 V65 Q75 68 62 70 L50 73 M50 73 Q50 76 38 79 L25 82 V94 M50 73 Q50 76 62 79 L75 82 V94" fill="none" stroke="#a3834c" stroke-width="4"/><path d="M50 0 V13 Q50 16 39 20 L25 25 V32 Q25 36 38 39 L50 42 M50 13 Q50 16 61 20 L75 25 V32 Q75 36 62 39 L50 42 M50 42 V46 Q50 49 38 53 L25 58 V65 Q25 68 38 70 L50 73 M50 46 Q50 49 62 53 L75 58 V65 Q75 68 62 70 L50 73 M50 73 Q50 76 38 79 L25 82 V94 M50 73 Q50 76 62 79 L75 82 V94" fill="none" stroke="#f4d892" stroke-width="2.8"/><path data-goal-path d="M50 73 Q50 76 38 79 L25 82 V94" fill="none" stroke="#17634d" stroke-width="1.4" stroke-dasharray="1.1 1"/></svg>
+    <div class="kr-landmark kr-start"><b>✓</b><span>Warming-up</span></div>
+    <button type="button" class="kr-map-button kr-question" data-puzzle-node aria-label="Start de volgende minuutpuzzel"><b>?</b><span>Puzzel</span></button>
+    <button type="button" class="kr-map-button kr-a" data-preview="A"><b>A</b><span>Squat · lunge</span></button>
+    <button type="button" class="kr-map-button kr-b" data-preview="B"><b>B</b><span>Row · push-up</span></button>
+    <button type="button" class="kr-map-button kr-shop" data-shop-button><b><i data-lucide="store" aria-hidden="true"></i></b><span>Winkel</span></button>
+    <button type="button" class="kr-map-button kr-second-a" data-preview="C"><b>?</b><span>Carry · step-up</span></button>
+    <button type="button" class="kr-map-button kr-second-b" data-preview="D"><b>?</b><span>Roeien · fietsen</span></button>
+    <div class="kr-map-caption" style="top:49%">METCON</div>
+    <div class="kr-map-caption" style="top:76%">LAATSTE AFSLAG</div>
+    <button type="button" class="kr-map-button kr-last-a" data-final="A"><b><i data-lucide="footprints" aria-hidden="true"></i></b></button>
+    <button type="button" class="kr-map-button kr-last-b" data-final="B"><b><i data-lucide="bike" aria-hidden="true"></i></b></button>
+    <button type="button" class="kr-map-button kr-finale-a" data-final="A"><b><i data-lucide="flag" aria-hidden="true"></i></b><span>De Ladder</span><small>Bekijk finale</small></button>
+    <button type="button" class="kr-map-button kr-finale-b" data-final="B"><b><i data-lucide="flag" aria-hidden="true"></i></b><span>De Motor</span><small>Bekijk finale</small></button>
+    <button type="button" class="kr-side kr-martijn" data-quest="martijn" aria-label="Sidequest bij Martijn"><span class="kr-npc" aria-hidden="true">M</span><span>Martijn</span><small>+1 ★</small></button>
+    <button type="button" class="kr-side kr-colleague" data-quest="colleague" aria-label="Sidequest: wie zegt dit?"><span class="kr-npc" aria-hidden="true">?</span><span>Wie zegt dit?</span></button>
+    <button type="button" class="kr-side kr-company" data-quest="company" aria-label="Sidequest: de jaaromzet"><span class="kr-npc" aria-hidden="true"><i data-lucide="coins" aria-hidden="true"></i></span><span>Omzet?</span></button>
+    <button type="button" class="kr-side kr-new" data-quest="new" aria-label="Sidequest: nieuwe collega's"><span class="kr-npc" aria-hidden="true"><i data-lucide="users" aria-hidden="true"></i></span><span>Nieuwe collega's?</span></button>
+    <div class="kr-party" data-party aria-label="De rondewinnaar voorop, daarna de anderen op totaalscore"></div>
+    <div class="kr-tree kr-t1" aria-hidden="true">♠</div><div class="kr-tree kr-t2" aria-hidden="true">♠</div><div class="kr-tree kr-t3" aria-hidden="true">♠</div>
+   </div>
+   <span class="kr-sr" data-status aria-live="polite"></span>
+  </div>
+  <div class="kr-overlay" role="dialog" aria-modal="true" aria-labelledby="kr-dialog-title" hidden data-overlay>
+   <div class="kr-dialog-top"><span data-overlay-label>MINUUTPUZZEL</span><span class="kr-clock" data-clock></span></div>
+   <section data-screen="puzzle" hidden>
+    <div class="kr-puzzle-head"><span class="kr-overline">REKENPUZZEL</span><h2 id="kr-dialog-title">Kies twee getallen.<br>Maak samen 10.</h2></div>
+    <div class="kr-number-grid"><button type="button" data-number="4">4</button><button type="button" data-number="8">8</button><button type="button" data-number="6">6</button><button type="button" data-number="9">9</button></div>
+    <div class="kr-answer-line" data-answer-line aria-live="polite">0 van 2 gekozen</div>
+    <button class="kr-primary" type="button" data-submit disabled>Controleer</button>
+    <p class="kr-small" data-puzzle-note>Een goed antwoord levert 1 punt op.</p>
+   </section>
+   <section data-screen="choice" hidden>
+    <div class="kr-choice-avatar" data-choice-avatar></div><h2 data-choice-title>Nina kiest de route</h2><p class="kr-small" data-choice-caption>De groep volgt samen.</p>
+    <div class="kr-blocks"><button type="button" data-choose="A"><b>A</b><strong data-choice-a>Squat<br>Lunge</strong><span>6 MIN</span></button><button type="button" data-choose="B"><b>B</b><strong data-choice-b>Row<br>Push-up</strong><span>6 MIN</span></button></div>
+    <p class="kr-small">Geen keuze? Het systeem kiest.</p>
+   </section>
+   <section data-screen="training" hidden>
+    <span class="kr-overline">SAMEN TRAINEN</span><h2 data-training-title>Squat<br>Lunge</h2><div class="kr-training-clock" data-training-clock>00:08</div><p class="kr-training-detail" data-training-detail>Om en om · eigen niveau</p><div class="kr-progress"><div data-training-progress></div></div><blockquote>“Je bent toch niet van suiker?”</blockquote><p class="kr-small">Speelvoorbeeld · oefenblok verkort tot 8 sec.</p>
+   </section>
+   <section data-screen="avatar" hidden>
+    <h2>Dit ben jij.</h2><label class="kr-name-label">Naam<input type="text" maxlength="24" autocomplete="off" data-name value="Nina"></label><div class="kr-avatar-preview" data-avatar-preview></div>
+    <fieldset><legend>Shirt</legend><div class="kr-colors"><button type="button" data-color="red" aria-label="Rood shirt"></button><button type="button" data-color="blue" aria-label="Blauw shirt"></button><button type="button" data-color="purple" aria-label="Paars shirt"></button><button type="button" data-color="green" aria-label="Groen shirt"></button></div></fieldset>
+    <fieldset><legend>In je hand</legend><div class="kr-accessories"><button type="button" data-accessory="book-open"><i data-lucide="book-open" aria-hidden="true"></i>Boek</button><button type="button" data-accessory="wrench"><i data-lucide="wrench" aria-hidden="true"></i>Sleutel</button><button type="button" data-accessory="hammer"><i data-lucide="hammer" aria-hidden="true"></i>Hamer</button><button type="button" data-accessory="smartphone"><i data-lucide="smartphone" aria-hidden="true"></i>Telefoon</button></div></fieldset>
+    <button class="kr-primary" type="button" data-done>Zo ga ik mee</button>
+   </section>
+   <section data-screen="shop" hidden>
+    <h2>De Knalwinkel</h2><p class="kr-shop-wallet" data-shop-wallet>● 30</p>
+    <button class="kr-product" type="button" data-product="dj" data-price="10"><i data-lucide="music" aria-hidden="true"></i><strong>Nummer kiezen</strong><span>10 ●</span></button>
+    <button class="kr-product" type="button" data-product="swap" data-price="15"><i data-lucide="repeat-2" aria-hidden="true"></i><strong>Oefening wisselen</strong><span>15 ●</span></button>
+    <button class="kr-product" type="button" data-product="outfit" data-price="5"><i data-lucide="shirt" aria-hidden="true"></i><strong>Nieuwe outfit</strong><span>5 ●</span></button>
+    <p class="kr-small" data-shop-message aria-live="polite">Je punten blijven staan als je munten uitgeeft.</p><button class="kr-primary" type="button" data-close-shop>Terug naar de groep</button>
+   </section>
+   <section data-screen="info" hidden><h2>Spelregels</h2><div class="kr-rules"><p>Goed antwoord: +1 punt.</p><p>Eerste goed: rondewinst, +5 munten en 30 seconden om de route te kiezen.</p><p>Anderen kunnen hun puzzelminuut afmaken. Zonder winnaar kiest het systeem.</p><p>De rondewinnaar loopt voorop. Daarna volgt de totaalscore.</p><p>De meeste punten winnen. Gelijke stand? Meeste rondewinsten, daarna samen winnen.</p><p>Munten uitgeven kost geen punten. Fysieke prestaties tellen niet mee.</p><p>Sidequests: maximaal één bonuspunt per ronde. De trainingsklok loopt door.</p></div><button type="button" class="kr-primary" data-close>Terug</button></section>
+   <section data-screen="preview" hidden><span class="kr-overline" data-preview-type>FINALE</span><h2 data-preview-title>De Ladder</h2><div class="kr-preview-icon"><i data-lucide="flag" aria-hidden="true"></i></div><p class="kr-preview-detail" data-preview-detail></p><p class="kr-small" data-preview-route></p><button type="button" class="kr-primary" data-close>Terug naar de kaart</button></section>
+   <section data-screen="quest" hidden><span class="kr-overline">SIDEQUEST</span><h2 data-quest-title>Wie zegt dit?</h2><blockquote data-quest-quote></blockquote><div class="kr-quest-answers"><button type="button" data-quest-answer="martijn">Martijn</button><button type="button" data-quest-answer="other">Een collega</button></div><p data-quest-result aria-live="polite"></p><button type="button" class="kr-primary" data-close>Terug naar de kaart</button></section>
+  </div>
+  <footer class="kr-caption">CONCEPT · TIMERS VERKORT</footer>
+ </div>
+</div>
+<style>
+#knal-route-v2{padding:16px 0;color-scheme:light;font:15px/1.4 system-ui,sans-serif;--ink:#153933;--paper:#fff9e9;--green:#17634d;--gold:#f3c649;--sky:#b7e3e8;--red:#c75640;--blue:#357bac;--purple:#82639f}
+#knal-route-v2 *{box-sizing:border-box}
+#knal-route-v2 [hidden]{display:none!important}
+#knal-route-v2 .kr-phone{max-width:420px;position:relative;margin:auto;border:3px solid var(--ink);border-radius:18px;overflow:hidden;background:var(--paper);color:var(--ink)}
+#knal-route-v2 button{font:inherit;cursor:pointer;color:inherit;touch-action:manipulation}
+#knal-route-v2 button:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+#knal-route-v2 button:disabled{opacity:.5;cursor:default}
+#knal-route-v2 .kr-header{display:flex;align-items:center;justify-content:space-between;background:var(--green);color:var(--paper);padding:16px;gap:12px}
+#knal-route-v2 .kr-header>div{display:flex;flex-direction:column;font:12px monospace;letter-spacing:1px}
+#knal-route-v2 .kr-header strong{font:700 21px monospace;letter-spacing:2px}
+#knal-route-v2 .kr-header button{border:0;background:transparent;color:var(--paper);display:flex;align-items:center;gap:7px;font-size:12px;min-height:44px;padding:0}
+#knal-route-v2 .kr-ranking{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;padding:13px 10px;background:var(--paper);border-bottom:2px solid var(--ink)}
+#knal-route-v2 .kr-rank{display:grid;grid-template-columns:18px 1fr;align-items:center;gap:5px;min-width:0}
+#knal-route-v2 .kr-rank>div:last-child{min-width:0;display:flex;flex-direction:column;gap:2px}
+#knal-route-v2 .kr-rank strong{font-size:11px;white-space:nowrap}
+#knal-route-v2 .kr-rank small{font:700 12px monospace}
+#knal-route-v2 .kr-person{display:inline-flex;position:relative;align-items:center;justify-content:center;width:26px;height:48px;--shirt:var(--red);flex-shrink:0}
+#knal-route-v2 .kr-body{display:block;position:relative;width:11px;height:12px;background:#e6ac80;box-shadow:0 -4px 0 #493b32,4px -4px 0 #493b32;margin-top:-15px}
+#knal-route-v2 .kr-body:before{content:'';position:absolute;top:12px;left:-3px;width:17px;height:12px;background:var(--shirt);box-shadow:-3px 3px 0 #e6ac80,3px 3px 0 #e6ac80}
+#knal-route-v2 .kr-body:after{content:'';position:absolute;top:24px;left:-1px;width:5px;height:8px;background:var(--ink);box-shadow:8px 0 0 var(--ink)}
+#knal-route-v2 .kr-held{position:absolute;left:19px;top:21px;color:var(--ink);z-index:2;filter:drop-shadow(1px 1px 0 var(--paper))}
+#knal-route-v2 .kr-held svg{width:15px;height:15px;stroke-width:2.5}
+#knal-route-v2 .kr-meta{display:flex;justify-content:space-between;gap:8px;padding:9px 15px;background:var(--gold);font:700 11px monospace;letter-spacing:1px}
+#knal-route-v2 .kr-map{height:410px;position:relative;background:var(--sky);overflow:hidden}
+#knal-route-v2 .kr-roads{position:absolute;inset:0;width:100%;height:100%}
+#knal-route-v2 .kr-landmark{position:absolute;display:flex;align-items:center;gap:8px;font-size:12px;z-index:1;transform:translate(-50%,-50%)}
+#knal-route-v2 .kr-landmark b{display:flex;align-items:center;justify-content:center;background:var(--gold);border:2px solid var(--ink);box-shadow:2px 2px 0 var(--ink);width:28px;height:28px;font:700 16px monospace;flex-shrink:0}
+#knal-route-v2 .kr-landmark b svg{width:17px;height:17px}
+#knal-route-v2 .kr-landmark>span{background:var(--paper);padding:3px 6px;white-space:nowrap}
+#knal-route-v2 .kr-start{left:58%;top:7%}#knal-route-v2 .kr-question{left:50%;top:24%}
+#knal-route-v2 .kr-a{left:24%;top:43%;flex-direction:column}#knal-route-v2 .kr-b{left:76%;top:43%;flex-direction:column}
+#knal-route-v2 .kr-shop{left:56%;top:64%}#knal-route-v2 .kr-metcon{left:58%;top:79%}#knal-route-v2 .kr-finish{left:57%;top:94%}
+#knal-route-v2 .kr-party{position:absolute;left:50%;top:19%;transform:translate(-50%,-50%);display:flex;flex-direction:row-reverse;align-items:end;gap:8px;z-index:3;transition:left .7s ease,top .7s ease}
+#knal-route-v2 .kr-walker{display:flex;flex-direction:column;align-items:center;position:relative}
+#knal-route-v2 .kr-walker small{font:10px monospace;background:var(--paper);padding:1px 3px;margin-top:-3px}
+#knal-route-v2 .kr-walker:first-child:before{content:'★';position:absolute;top:-10px;left:7px;background:var(--gold);color:var(--ink);font-size:13px;width:17px;text-align:center;border-radius:50%}
+#knal-route-v2 .kr-cloud{position:absolute;background:var(--paper);height:12px;width:35px;box-shadow:9px -6px 0 var(--paper),20px -9px 0 var(--paper),29px 0 0 var(--paper);opacity:.8}
+#knal-route-v2 .kr-c1{left:8%;top:16%}#knal-route-v2 .kr-c2{right:11%;top:56%;transform:scale(.7)}
+#knal-route-v2 .kr-tree{position:absolute;color:#398663;font-size:55px;line-height:1;pointer-events:none}
+#knal-route-v2 .kr-t1{left:8%;top:62%}#knal-route-v2 .kr-t2{right:8%;top:8%}#knal-route-v2 .kr-t3{right:8%;top:83%}
+#knal-route-v2 .kr-bottom{padding:15px;display:flex;flex-direction:column;gap:12px}
+#knal-route-v2 p{margin:0}#knal-route-v2 .kr-bottom>p{font-size:13px;min-height:36px}
+#knal-route-v2 .kr-primary{display:block;width:100%;border:2px solid var(--ink);background:var(--green);color:var(--paper);padding:13px 10px;min-height:48px;font-weight:700;box-shadow:3px 3px 0 var(--ink)}
+#knal-route-v2 .kr-bottomline{display:flex;align-items:center;justify-content:space-between;gap:8px;font:10px monospace}
+#knal-route-v2 .kr-bottomline button{background:transparent;border:0;text-decoration:underline;font:13px system-ui;min-height:36px}
+#knal-route-v2 .kr-caption{text-align:center;background:var(--ink);color:var(--paper);padding:9px;font:10px monospace;letter-spacing:.7px}
+#knal-route-v2 .kr-overlay{position:absolute;inset:0;background:var(--paper);z-index:10;padding:22px;display:flex;flex-direction:column;gap:26px;min-height:100%}
+#knal-route-v2 .kr-dialog-top{display:flex;align-items:center;justify-content:space-between;gap:10px;font:700 12px monospace;min-height:36px;border-bottom:2px solid var(--ink);padding-bottom:13px}
+#knal-route-v2 .kr-clock{font:700 23px monospace;min-width:70px;text-align:right;font-variant-numeric:tabular-nums}
+#knal-route-v2 [data-screen]{display:flex;flex-direction:column;gap:22px}
+#knal-route-v2 h2{font-size:28px;line-height:1.15;margin:0}
+#knal-route-v2 .kr-overline{font:700 12px monospace;letter-spacing:1px}
+#knal-route-v2 .kr-puzzle-head{display:flex;flex-direction:column;gap:12px}
+#knal-route-v2 .kr-number-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+#knal-route-v2 .kr-number-grid button{min-height:89px;border:2px solid var(--ink);background:#ede7cf;font:700 37px monospace;box-shadow:3px 3px 0 var(--ink)}
+#knal-route-v2 .kr-number-grid button[aria-pressed=true]{background:var(--gold)}
+#knal-route-v2 .kr-answer-line{min-height:22px;font-size:14px}
+#knal-route-v2 .kr-small{font-size:13px;color:#3c5750}
+#knal-route-v2 .kr-choice-avatar{height:80px;display:flex;align-items:center;justify-content:center;gap:15px;background:#e5ead6}
+#knal-route-v2 .kr-choice-avatar .kr-person{transform:scale(1.5)}
+#knal-route-v2 .kr-blocks{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+#knal-route-v2 .kr-blocks button{background:var(--gold);border:2px solid var(--ink);box-shadow:4px 4px 0 var(--ink);min-height:210px;text-align:left;display:flex;flex-direction:column;justify-content:space-between;padding:15px}
+#knal-route-v2 .kr-blocks b{font:700 30px monospace}#knal-route-v2 .kr-blocks strong{font-size:20px}#knal-route-v2 .kr-blocks span{font:12px monospace}
+#knal-route-v2 [data-screen=training]{align-items:center;text-align:center;gap:28px;padding-top:35px}
+#knal-route-v2 [data-screen=training] h2{font-size:38px;line-height:1.3}
+#knal-route-v2 .kr-training-clock{font:700 64px monospace;font-variant-numeric:tabular-nums}
+#knal-route-v2 .kr-training-detail{font-size:16px}
+#knal-route-v2 .kr-progress{width:100%;height:10px;background:#d9dfc8}
+#knal-route-v2 .kr-progress>div{height:100%;width:100%;background:var(--green)}
+#knal-route-v2 blockquote{font-size:20px;font-style:italic;margin:15px 0}
+#knal-route-v2 .kr-avatar-preview{display:flex;justify-content:center;align-items:center;height:130px;background:var(--sky)}
+#knal-route-v2 .kr-avatar-preview .kr-person{transform:scale(2.7)}
+#knal-route-v2 fieldset{border:0;padding:0;margin:0;min-width:0}#knal-route-v2 legend{font:700 13px monospace;padding:0;margin-bottom:12px}
+#knal-route-v2 .kr-colors{display:flex;gap:12px}
+#knal-route-v2 .kr-colors button{width:48px;height:48px;border:2px solid var(--ink);background:var(--shirt)}
+#knal-route-v2 [data-color=red]{--shirt:var(--red)}#knal-route-v2 [data-color=blue]{--shirt:var(--blue)}#knal-route-v2 [data-color=purple]{--shirt:var(--purple)}#knal-route-v2 [data-color=green]{--shirt:var(--green)}
+#knal-route-v2 .kr-colors button[aria-pressed=true]{box-shadow:0 0 0 3px var(--paper),0 0 0 5px var(--ink)}
+#knal-route-v2 .kr-accessories{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#knal-route-v2 .kr-accessories button{border:2px solid var(--ink);background:var(--paper);padding:12px 8px;display:flex;align-items:center;gap:8px;font-size:13px;min-height:46px}
+#knal-route-v2 .kr-accessories button[aria-pressed=true]{background:var(--gold)}
+#knal-route-v2 .kr-shop-wallet{font:700 27px monospace}
+#knal-route-v2 .kr-product{display:flex;align-items:center;gap:12px;background:var(--gold);padding:18px 12px;border:2px solid var(--ink);text-align:left}
+#knal-route-v2 .kr-product strong{font-size:14px;flex:1}#knal-route-v2 .kr-product span{font:700 14px monospace;white-space:nowrap}
+@media(max-width:360px){#knal-route-v2 .kr-overlay{padding:17px}#knal-route-v2 .kr-ranking{gap:3px;padding:12px 8px}#knal-route-v2 .kr-rank{grid-template-columns:15px 1fr;gap:4px}#knal-route-v2 .kr-rank strong{font-size:10px}#knal-route-v2 .kr-rank small{font-size:11px}#knal-route-v2 .kr-header strong{font-size:19px}#knal-route-v2 .kr-landmark>span{font-size:11px}#knal-route-v2 .kr-blocks strong{font-size:18px}}
+@media(prefers-reduced-motion:reduce){#knal-route-v2 .kr-party{transition:none}}
+#knal-route-v2 .kr-map{height:960px;background:linear-gradient(#b7e3e8 0% 43%,#c8e2b4 43% 75%,#eed5b3 75%)}
+#knal-route-v2 .kr-tools{display:flex;align-items:center;gap:4px}
+#knal-route-v2 .kr-tools button{justify-content:center;width:44px}
+#knal-route-v2 .kr-meta{align-items:center;padding:5px 12px;min-height:48px}
+#knal-route-v2 [data-main]{background:var(--green);color:var(--paper);border:2px solid var(--ink);padding:7px 14px;min-height:38px;font:700 12px monospace}
+#knal-route-v2 .kr-map-button{position:absolute;transform:translate(-50%,-50%);display:flex;align-items:center;flex-direction:column;gap:5px;border:0;padding:5px;background:transparent;min-width:44px;min-height:44px;z-index:2}
+#knal-route-v2 .kr-map-button b{display:flex;align-items:center;justify-content:center;background:var(--gold);border:2px solid var(--ink);width:29px;height:29px;box-shadow:2px 2px 0 var(--ink);font:700 16px monospace}
+#knal-route-v2 .kr-map-button b svg{width:17px;height:17px}
+#knal-route-v2 .kr-map-button>span{background:var(--paper);padding:3px 6px;font-size:12px;white-space:nowrap}
+#knal-route-v2 .kr-map-button>small{font-size:11px;background:var(--paper);padding:1px 4px}
+#knal-route-v2 .kr-start{left:58%;top:3%}#knal-route-v2 .kr-question{left:50%;top:14%}
+#knal-route-v2 .kr-a{left:25%;top:27%}#knal-route-v2 .kr-b{left:75%;top:27%}
+#knal-route-v2 .kr-shop{left:50%;top:43%}
+#knal-route-v2 .kr-second-a{left:25%;top:60%}#knal-route-v2 .kr-second-b{left:75%;top:60%}
+#knal-route-v2 .kr-last-a{left:25%;top:83%}#knal-route-v2 .kr-last-b{left:75%;top:83%}
+#knal-route-v2 .kr-finale-a{left:25%;top:95%}#knal-route-v2 .kr-finale-b{left:75%;top:95%}
+#knal-route-v2 .kr-map-button.is-goal b{background:var(--green);color:var(--paper)}
+#knal-route-v2 .kr-map-caption{position:absolute;left:50%;transform:translateX(-50%);padding:3px 6px;background:var(--paper);font:700 11px monospace;white-space:nowrap}
+#knal-route-v2 .kr-side{position:absolute;display:flex;align-items:center;flex-direction:column;gap:3px;transform:translate(-50%,-50%);background:transparent;border:0;min-width:44px;min-height:44px;padding:4px;z-index:2}
+#knal-route-v2 .kr-side>span:not(.kr-npc){background:var(--paper);padding:2px 4px;font-size:11px}
+#knal-route-v2 .kr-side small{background:var(--gold);padding:1px 3px;font:11px monospace}
+#knal-route-v2 .kr-npc{display:flex;align-items:center;justify-content:center;width:32px;height:38px;background:var(--green);color:var(--paper);border:2px solid var(--ink);box-shadow:3px 3px 0 #15393330;font:700 20px monospace}
+#knal-route-v2 .kr-martijn{left:14%;top:12%}#knal-route-v2 .kr-colleague{left:86%;top:35%}
+#knal-route-v2 .kr-company{left:13%;top:70%}#knal-route-v2 .kr-new{left:84%;top:73%}
+#knal-route-v2 .kr-t1{left:8%;top:45%}#knal-route-v2 .kr-t2{right:8%;top:5%}#knal-route-v2 .kr-t3{left:7%;top:88%}
+#knal-route-v2 .kr-sr{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+#knal-route-v2 .kr-rules{display:flex;flex-direction:column;gap:15px;font-size:15px}
+#knal-route-v2 .kr-preview-icon{background:var(--gold);padding:32px;display:flex;align-items:center;justify-content:center}
+#knal-route-v2 .kr-preview-icon svg{width:60px;height:60px}
+#knal-route-v2 .kr-preview-detail{font-size:22px;line-height:1.6;white-space:pre-line}
+#knal-route-v2 .kr-quest-answers{display:flex;flex-direction:column;gap:12px}
+#knal-route-v2 .kr-quest-answers button{padding:15px;border:2px solid var(--ink);background:var(--gold);text-align:left}
+#knal-route-v2 .kr-held [data-lucide]{font-size:17px;line-height:1}
+#knal-route-v2 .kr-blocks button>small{font-size:12px}
+#knal-route-v2 .kr-name-label{display:flex;align-items:center;gap:12px;font-size:14px}
+#knal-route-v2 .kr-name-label input{min-width:0;width:100%;padding:9px;border:2px solid var(--ink);background:var(--paper);color:var(--ink);font:16px system-ui}
+</style>
+<script>(()=>{
+'use strict';
+const r=document.getElementById('knal-route-v2');
+const el=s=>r.querySelector(s),all=s=>Array.from(r.querySelectorAll(s));
+const base={name:'Nina',color:'red',accessory:'book-open',points:3,coins:30,leader:'nina',leg:0,position:'question',target:'A',block:null,bought:null,questRound:-1,finished:false};
+let state={...base};
+const saved=window.openai?.widgetState?.privateContent;
+if(saved?.knalAdventure===3)state={...base,...saved.state};
+let screen=null,deadline=0,puzzleClose=0,selected=[],scored=false,walkTimer=null,returnFocus=null,activeQuest=null;
+const DEMO={puzzle:10000,choice:5000,training:8000};
+const choices=[
+ {A:['Squat','Lunge'],B:['Row','Push-up']},
+ {A:['Carry','Step-up'],B:['Roeien','Fietsen']},
+ {A:['Step-up','Carry'],B:['Fietsen','Roeien']}
+];
+const finales={A:{name:'De Ladder',detail:'Step-up + carry\n4 rondes · 6 minuten',route:'Volg het linkerpad bij de laatste afslag.'},B:{name:'De Motor',detail:'Fietsen + roeien\n6 intervallen · 6 minuten',route:'Volg het rechterpad bij de laatste afslag.'}};
+const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function save(){if(window.openai?.setWidgetState)window.openai.setWidgetState({modelContent:{concept:'zichtbare finales en sidequests',naam:state.name,poppetje:{kleur:state.color,voorwerp:state.accessory},richting:finales[state.target].name},privateContent:{knalAdventure:3,state}}).catch(()=>{});}
+function players(){return [{id:'samir',name:'Samir',points:5,color:'blue',accessory:'wrench'},{id:'nina',name:state.name,points:state.points,color:state.color,accessory:state.accessory},{id:'joost',name:'Joost',points:2,color:'purple',accessory:'hammer'},{id:'eva',name:'Eva',points:1,color:'green',accessory:'smartphone'}].sort((a,b)=>b.points-a.points||a.name.localeCompare(b.name));}
+function sprite(p){return '<span class="kr-person" style="--shirt:var(--'+p.color+')" aria-hidden="true"><span class="kr-body"></span><span class="kr-held"><i data-lucide="'+p.accessory+'" aria-hidden="true"></i></span></span>';}
+function icons(){if(globalThis.lucide)globalThis.lucide.createIcons({attrs:{width:18,height:18}});}
+function render(){
+ const list=players();
+ el('[data-ranking]').innerHTML=list.map((p,i)=>'<div class="kr-rank" aria-label="'+(i+1)+'. '+escape(p.name)+', '+p.points+' punten">'+sprite(p)+'<div><strong>'+escape(p.name)+'</strong><small>'+p.points+' ★</small></div></div>').join('');
+ const march=[...list].sort((a,b)=>a.id===state.leader?-1:b.id===state.leader?1:b.points-a.points||a.name.localeCompare(b.name));
+ el('[data-party]').innerHTML=march.map(p=>'<div class="kr-walker">'+sprite(p)+'<small>'+escape(p.name)+'</small></div>').join('');
+ const positions={question:[50,10],shop:[50,40],middle:[50,70],final:[state.target==='A'?25:75,90]};
+ let pos=positions[state.position]||positions.question;
+ if(state.position==='A'||state.position==='B')pos=[state.position==='A'?25:75,[23,56,80][Math.min(state.leg,2)]];
+ el('[data-party]').style.left=pos[0]+'%';el('[data-party]').style.top=pos[1]+'%';
+ el('[data-coins]').textContent='● '+state.coins;
+ el('[data-world]').textContent=['KRACHT','METCON','LAATSTE AFSLAG','FINALE'][Math.min(state.leg,3)];
+ el('[data-main]').textContent=state.finished?'Finish':state.leg>=3?'Finale':'Start';
+ el('[data-main]').disabled=state.finished;
+ el('[data-puzzle-node]').disabled=state.finished;
+ el('[data-goal-path]').setAttribute('d',state.target==='A'?'M50 73 Q50 76 38 79 L25 82 V94':'M50 73 Q50 76 62 79 L75 82 V94');
+ all('[data-final]').forEach(b=>b.classList.toggle('is-goal',b.dataset.final===state.target));
+ el('[data-avatar-preview]').innerHTML=sprite(list.find(p=>p.id==='nina'));
+ all('[data-color]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.color===state.color)));
+ all('[data-accessory]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.accessory===state.accessory)));
+ el('[data-shop-wallet]').textContent='● '+state.coins;
+ all('[data-product]').forEach(b=>b.disabled=state.coins<Number(b.dataset.price)||!!state.bought);
+ icons();
+}
+function open(type){
+ returnFocus=document.activeElement;
+ screen=type;el('[data-overlay]').hidden=false;el('[data-background]').inert=true;
+ all('[data-screen]').forEach(s=>s.hidden=s.dataset.screen!==type);
+ el('[data-overlay-label]').textContent={puzzle:'MINUUTPUZZEL',choice:'KIES DE ROUTE',training:'TRAININGSBLOK',avatar:'MIJN POPPETJE',shop:'WINKEL',info:'SPELREGELS',preview:'BEKIJK HET PAD',quest:'SIDEQUEST'}[type];
+ const title=el('[data-screen="'+type+'"] h2');if(title){all('[data-screen] h2').forEach(x=>x.removeAttribute('id'));title.id='kr-dialog-title';}
+ el('[data-clock]').textContent='';
+ el('[data-overlay]').scrollIntoView?.({block:'start',behavior:'instant'});
+ const control=el('[data-screen="'+type+'"] button');control?.focus({preventScroll:true});
+}
+function close(){screen=null;el('[data-overlay]').hidden=true;el('[data-background]').inert=false;if(returnFocus?.isConnected)returnFocus.focus({preventScroll:true});}
+function clock(ms){const n=Math.max(0,Math.ceil(ms/1000));return String(Math.floor(n/60)).padStart(2,'0')+':'+String(n%60).padStart(2,'0');}
+function startPuzzle(){
+ if(state.finished)return;
+ if(state.leg>=3){startTraining(true);return;}
+ selected=[];scored=false;state.bought=null;
+ all('[data-choose]').forEach(b=>b.disabled=false);
+ puzzleClose=Date.now()+DEMO.puzzle;deadline=puzzleClose;
+ all('[data-number]').forEach(b=>b.setAttribute('aria-pressed','false'));
+ el('[data-answer-line]').textContent='';el('[data-submit]').disabled=true;
+ el('[data-puzzle-note]').textContent='Voorbeeld: 10 sec. Normaal: 60 sec.';
+ open('puzzle');tick();
+}
+function showChoice(won){
+ state.leader=won?'nina':null;
+ if(!won){selectBlock(Math.random()<.5?'A':'B');return;}
+ if(!scored){state.points++;state.coins+=5;scored=true;}
+ deadline=Date.now()+DEMO.choice;
+ const pair=choices[Math.min(state.leg,2)];
+ el('[data-choice-title]').textContent=state.name+' kiest';
+ el('[data-choice-caption]').textContent='Voorbeeld: 5 sec. Normaal: 30 sec.';
+ el('[data-choice-avatar]').innerHTML=sprite(players().find(p=>p.id==='nina'));
+ el('[data-choice-a]').innerHTML=pair.A.join('<br>');el('[data-choice-b]').innerHTML=pair.B.join('<br>');
+ all('[data-choose]').forEach(b=>{b.querySelector('span').textContent='90 SEC';let hint=b.querySelector('small');if(!hint){hint=document.createElement('small');b.appendChild(hint);}hint.textContent='Richting '+finales[b.dataset.choose].name;});
+ open('choice');render();tick();save();
+}
+function selectBlock(block){
+ state.block=block;state.target=block;state.position=block;close();render();
+ el('[data-main]').disabled=true;el('[data-puzzle-node]').disabled=true;
+ clearTimeout(walkTimer);walkTimer=setTimeout(()=>{
+  if(puzzleClose>Date.now()){
+   open('choice');el('[data-choice-title]').textContent='Route '+block;
+   el('[data-choice-caption]').textContent='De puzzelminuut loopt af.';
+   all('[data-choose]').forEach(b=>b.disabled=true);
+   deadline=puzzleClose;screen='waiting';
+  }else startTraining(false);
+ },800);save();
+}
+function startTraining(finale=false){
+ all('[data-choose]').forEach(b=>b.disabled=false);open('training');
+ deadline=Date.now()+DEMO.training;state.trainingFinale=finale;
+ const pair=choices[Math.min(state.leg,2)];
+ el('[data-training-title]').innerHTML=finale?finales[state.target].name:pair[state.block||'A'].join('<br>');
+ el('[data-training-detail]').textContent=finale?finales[state.target].detail.split('\n')[0]:'Om en om · eigen niveau';
+ tick();
+}
+function finishTraining(){
+ if(state.trainingFinale){state.finished=true;state.position='final';}
+ else{state.leg++;state.position=state.leg===1?'shop':state.leg===2?'middle':'final';}
+ close();render();save();
+}
+function tick(){
+ if(!screen)return;const left=deadline-Date.now();
+ if(['puzzle','choice','waiting'].includes(screen)){
+  el('[data-clock]').textContent=clock(left);
+  if(left<=0){if(screen==='puzzle')showChoice(false);else if(screen==='choice')selectBlock(Math.random()<.5?'A':'B');else startTraining(false);}
+ }else if(screen==='training'){
+  el('[data-clock]').textContent='';el('[data-training-clock]').textContent=clock(left);
+  el('[data-training-progress]').style.width=Math.max(0,Math.min(100,left/DEMO.training*100))+'%';
+  if(left<=0)finishTraining();
+ }
+}
+function preview(title,detail,route,type='FINALE'){
+ el('[data-preview-title]').textContent=title;el('[data-preview-detail]').textContent=detail;
+ el('[data-preview-route]').textContent=route;el('[data-preview-type]').textContent=type;open('preview');
+}
+function quest(id){
+ activeQuest=id;
+ const q={martijn:['Wie zegt dit?','“Je bent toch niet van suiker?”'],colleague:['Wie zegt dit?','Bekende collega + uitspraak: nog invullen.'],company:['Wat is de jaaromzet?','Schouten Techniek · bedrag nog invullen.'],new:['Hoeveel nieuwe collega’s?','Periode en antwoord nog invullen.']}[id];
+ el('[data-quest-title]').textContent=q[0];el('[data-quest-quote]').textContent=q[1];
+ el('[data-quest-result]').textContent=id==='martijn'&&state.questRound===state.leg?'Deze ronde al geclaimd.':'';
+ el('.kr-quest-answers').hidden=id!=='martijn';
+ all('[data-quest-answer]').forEach(b=>b.disabled=state.questRound===state.leg);
+ open('quest');
+}
+el('[data-main]').addEventListener('click',startPuzzle);el('[data-puzzle-node]').addEventListener('click',startPuzzle);
+all('[data-number]').forEach(b=>b.addEventListener('click',()=>{
+ const n=Number(b.dataset.number);
+ if(selected.includes(n))selected=selected.filter(x=>x!==n);else if(selected.length<2)selected.push(n);
+ all('[data-number]').forEach(x=>x.setAttribute('aria-pressed',String(selected.includes(Number(x.dataset.number)))));
+ el('[data-answer-line]').textContent=selected.length?selected.join(' + ')+' = ?':'';el('[data-submit]').disabled=selected.length!==2;
+}));
+el('[data-submit]').addEventListener('click',()=>{
+ if(Date.now()>=puzzleClose){showChoice(false);return;}
+ if(selected.reduce((a,b)=>a+b,0)===10)showChoice(true);else el('[data-answer-line]').textContent='Probeer opnieuw.';
+});
+all('[data-choose]').forEach(b=>b.addEventListener('click',()=>{if(screen==='choice')selectBlock(b.dataset.choose);}));
+el('[data-info]').addEventListener('click',()=>open('info'));
+all('[data-close]').forEach(b=>b.addEventListener('click',close));
+all('[data-final]').forEach(b=>b.addEventListener('click',()=>{const f=finales[b.dataset.final];preview(f.name,f.detail,f.route);}));
+all('[data-preview]').forEach(b=>b.addEventListener('click',()=>{
+ const options={A:['Squat + lunge','90 seconden','Kracht · richting De Ladder'],B:['Row + push-up','90 seconden','Kracht · richting De Motor'],C:['Carry + step-up','90 seconden','Metcon · richting De Ladder'],D:['Roeien + fietsen','90 seconden','Metcon · richting De Motor']}[b.dataset.preview];
+ preview(options[0],options[1],options[2],'TRAININGSSTOP');
+}));
+all('[data-quest]').forEach(b=>b.addEventListener('click',()=>quest(b.dataset.quest)));
+all('[data-quest-answer]').forEach(b=>b.addEventListener('click',()=>{
+ if(activeQuest!=='martijn'||state.questRound===state.leg)return;
+ state.questRound=state.leg;
+ if(b.dataset.questAnswer==='martijn'){state.points++;el('[data-quest-result]').textContent='+1 ★';}else el('[data-quest-result]').textContent='Dat is Martijn.';
+ all('[data-quest-answer]').forEach(x=>x.disabled=true);render();save();
+}));
+el('[data-edit]').addEventListener('click',()=>{el('[data-name]').value=state.name;open('avatar');render();});
+all('[data-color]').forEach(b=>b.addEventListener('click',()=>{state.color=b.dataset.color;render();save();}));
+all('[data-accessory]').forEach(b=>b.addEventListener('click',()=>{state.accessory=b.dataset.accessory;render();save();}));
+el('[data-done]').addEventListener('click',()=>{state.name=el('[data-name]').value.trim().slice(0,24)||'Speler';close();render();save();});
+el('[data-shop-button]').addEventListener('click',()=>{
+ if(state.position!=='shop'){preview('De Knalwinkel','Muziek · power-ups · outfits','Opent wanneer de groep hier aankomt.','WINKELSTOP');return;}
+ open('shop');render();
+});
+el('[data-close-shop]').addEventListener('click',close);
+all('[data-product]').forEach(b=>b.addEventListener('click',()=>{
+ const cost=Number(b.dataset.price);if(state.bought||state.coins<cost)return;
+ state.coins-=cost;state.bought=b.dataset.product;
+ el('[data-shop-message]').textContent={dj:'Nummerkeuze gekocht.',swap:'Oefenwissel gekocht.',outfit:'Feestoutfit gekocht.'}[state.bought];render();save();
+}));
+window.addEventListener('openai:set_globals',event=>{
+ const s=event.detail?.globals?.widgetState?.privateContent;
+ if(s?.knalAdventure===3&&!screen){state={...base,...s.state};render();}
+});
+render();
+const interval=setInterval(()=>{if(!r.isConnected){clearInterval(interval);clearTimeout(walkTimer);return;}tick();},250);
+})();
+</script>
