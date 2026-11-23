@@ -197,8 +197,10 @@ $('[data-start]').onclick = async () => {
 };
 
 $('[data-create]').onclick = async () => {
-  const result = await post('', { demo: $('[data-demo]').checked });
-  if (!result.code) return alert(result.message ?? 'Sessie maken mislukt.');
+  const key = $('[data-admin-key]').value;
+  const result = await post('', { demo: $('[data-demo]').checked }, key ? { 'X-Admin-Key': key } : {});
+  if (result.code === 'forbidden') $('[data-key-label]').hidden = false; // server vraagt een beheersleutel
+  if (!result.adminToken) return void ($('[data-create-error]').textContent = result.message ?? 'Sessie maken mislukt.');
   storage(s => s.setItem(`kf_admin_${result.code}`, result.adminToken));
   location.href = `/s/${result.code}`;
 };

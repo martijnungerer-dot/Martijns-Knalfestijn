@@ -69,7 +69,7 @@ De gedeelde app draait als Cloudflare Worker: de pagina's als statische bestande
 2. Build command leeg laten; deploy command: `npx wrangler deploy`.
 3. Na de deploy staat de app op `https://martijns-knalfestijn.<jouw-subdomein>.workers.dev`. Elke push naar `main` publiceert opnieuw.
 
-Iedereen met de link kan een sessie aanmaken; starten kan alleen de maker. Een beheersleutel (`ADMIN_KEY`) wordt door de server ondersteund, maar de beginpagina vraagt er nog niet om: zet hem nog niet.
+Zet daarna in de Worker-instellingen een geheim `ADMIN_KEY` (Settings → Variables and Secrets, type Secret). Dan vraagt de beginpagina die sleutel bij "Nieuwe sessie" en kan niet iedereen met de link sessies aanmaken. Starten kan altijd alleen de maker van de sessie.
 
 Bewerk eerst `src/prototype.html` en maak daarna de export opnieuw. `index.html` wordt bij het bouwen overschreven. De lokale server toont alleen de export op `http://127.0.0.1:4173`.
 

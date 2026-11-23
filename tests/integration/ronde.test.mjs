@@ -226,3 +226,15 @@ test('herstart tijdens open keuze zonder keuze: systeem kiest alsnog bij de juis
   assert.deepEqual([s.phase, s.round.chosenBlockId, s.round.chosenBy], ['puzzle', 'row', 'system']);
   assert.equal(s.walkOrder[0], s.round.winnerId);
 });
+
+test('met beheersleutel: sessie maken alleen met de juiste sleutel', async t => {
+  const app = createApp({ content, adminKey: 'geheim', tickMs: 0 });
+  await new Promise(r => app.server.listen(0, '127.0.0.1', r));
+  t.after(() => { app.server.closeAllConnections(); app.server.close(); });
+  const make = headers => fetch(`http://127.0.0.1:${app.server.address().port}/api/sessions`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json', ...headers }, body: '{}',
+  }).then(r => r.status);
+  assert.equal(await make({}), 403);
+  assert.equal(await make({ 'X-Admin-Key': 'fout' }), 403);
+  assert.equal(await make({ 'X-Admin-Key': 'geheim' }), 201);
+});
