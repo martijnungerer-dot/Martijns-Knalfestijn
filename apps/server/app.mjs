@@ -1,139 +1,82 @@
-// HTTP-server voor gedeelde sessies: opdrachten via JSON-POST, toestand via SSE.
-// Toestand staat in het geheugen van één proces; herstel na serverherstart is mijlpaal 2.
+// Lokale Node-server: dezelfde kamers als op Cloudflare, met een eenvoudige opslag.
+// `store` is een Map(code -> JSON-tekst); geef dezelfde Map door om een herstart na te bootsen.
 import { createServer } from 'node:http';
-import { randomBytes, randomUUID, timingSafeEqual } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
-import * as game from '../../packages/game/engine.mjs';
+import { Readable } from 'node:stream';
+import { Room, newCode } from './room.mjs';
 
 const WEB = new URL('../web/', import.meta.url);
 const STATIC = {
   '/app.js': ['app.js', 'text/javascript; charset=utf-8'],
   '/style.css': ['style.css', 'text/css; charset=utf-8'],
 };
-const CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 
-function newCode() {
-  return [...randomBytes(8)].map(b => CODE_ALPHABET[b % CODE_ALPHABET.length]).join('');
-}
+export function createApp({ content, now = Date.now, adminKey = process.env.ADMIN_KEY, tickMs = 250, store = new Map() }) {
+  const rooms = new Map();
 
-function safeEqual(a, b) {
-  const x = Buffer.from(String(a ?? '')), y = Buffer.from(String(b ?? ''));
-  return x.length === y.length && timingSafeEqual(x, y);
-}
-
-function cookies(req) {
-  return Object.fromEntries((req.headers.cookie ?? '').split(';').map(c => c.trim().split('=')).filter(([k]) => k));
-}
-
-export function createApp({ content, now = Date.now, adminKey = process.env.ADMIN_KEY, tickMs = 250 }) {
-  const sessions = new Map(); // code -> { state, adminToken, tokens: Map(token -> participantId), streams: Set }
-
-  function publish(entry) {
-    for (const stream of entry.streams) {
-      const data = JSON.stringify(game.view(entry.state, now(), stream.viewerId));
-      stream.res.write(`id: ${entry.state.revision}\nevent: state\ndata: ${data}\n\n`);
+  function room(code) {
+    if (!rooms.has(code)) {
+      if (!store.has(code)) return null;
+      const storage = { save: record => store.set(code, JSON.stringify(record)) };
+      rooms.set(code, new Room({ record: JSON.parse(store.get(code)), storage, now }));
     }
+    return rooms.get(code);
   }
 
-  function tick() {
-    for (const entry of sessions.values()) if (game.advance(entry.state, now())) publish(entry);
+  async function tick() {
+    for (const code of store.keys()) await room(code).tick();
   }
 
-  const send = (res, status, body, headers = {}) => {
-    res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', ...headers });
-    res.end(JSON.stringify(body));
-  };
-
-  async function readJson(req) {
-    if (!String(req.headers['content-type'] ?? '').startsWith('application/json')) return null;
-    let raw = '';
-    for await (const chunk of req) { raw += chunk; if (raw.length > 10_000) return null; }
-    try { return JSON.parse(raw || '{}'); } catch { return null; }
-  }
-
-  async function handle(req, res) {
-    const url = new URL(req.url, 'http://localhost');
+  async function handle(request) {
+    const url = new URL(request.url);
     const parts = url.pathname.split('/').filter(Boolean);
-
-    if (req.method === 'GET' && (url.pathname === '/' || parts[0] === 's')) {
-      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' });
-      return res.end(await readFile(new URL('index.html', WEB)));
-    }
-    if (req.method === 'GET' && STATIC[url.pathname]) {
+    if (request.method === 'GET' && (url.pathname === '/' || parts[0] === 's'))
+      return new Response(await readFile(new URL('index.html', WEB)), { headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' } });
+    if (request.method === 'GET' && STATIC[url.pathname]) {
       const [file, type] = STATIC[url.pathname];
-      res.writeHead(200, { 'Content-Type': type, 'Cache-Control': 'no-store' });
-      return res.end(await readFile(new URL(file, WEB)));
+      return new Response(await readFile(new URL(file, WEB)), { headers: { 'Content-Type': type, 'Cache-Control': 'no-store' } });
     }
-    if (parts[0] !== 'api' || parts[1] !== 'sessions') return send(res, 404, { code: 'not_found' });
+    if (parts[0] !== 'api' || parts[1] !== 'sessions') return Response.json({ code: 'not_found' }, { status: 404 });
 
-    // POST /api/sessions — sessie maken
-    if (parts.length === 2 && req.method === 'POST') {
-      const body = await readJson(req);
-      if (!body) return send(res, 415, { code: 'json_required' });
-      if (adminKey && !safeEqual(req.headers['x-admin-key'], adminKey)) return send(res, 403, { code: 'forbidden', message: 'Beheersleutel vereist.' });
+    if (parts.length === 2 && request.method === 'POST') {
+      if (!(request.headers.get('content-type') ?? '').startsWith('application/json')) return Response.json({ code: 'json_required' }, { status: 415 });
+      if (adminKey && request.headers.get('x-admin-key') !== adminKey) return Response.json({ code: 'forbidden', message: 'Beheersleutel vereist.' }, { status: 403 });
+      const body = await request.json().catch(() => ({}));
       const code = newCode();
-      const demo = body.demo === true;
-      const state = game.createSession({ code, content: { ...content, demo }, durations: demo ? content.demoDurations : content.durations });
-      const entry = { state, adminToken: randomBytes(24).toString('base64url'), tokens: new Map(), streams: new Set() };
-      sessions.set(code, entry);
-      return send(res, 201, { code, adminToken: entry.adminToken });
+      const record = Room.create({ code, content, demo: body.demo === true });
+      store.set(code, JSON.stringify(record));
+      return Response.json({ code, adminToken: record.adminToken }, { status: 201 });
     }
-
-    const entry = sessions.get(parts[2]);
-    if (!entry) return send(res, 404, { code: 'no_session', message: 'Sessie niet gevonden.' });
-    const s = entry.state;
-    game.advance(s, now()) && publish(entry);
-    const cookieName = `kf_${s.code}`;
-    const viewerId = entry.tokens.get(cookies(req)[cookieName]);
-    const action = parts.slice(3).join('/');
-
-    if (req.method === 'GET' && action === 'state') return send(res, 200, game.view(s, now(), viewerId));
-
-    if (req.method === 'GET' && action === 'events') {
-      res.writeHead(200, { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-store', Connection: 'keep-alive' });
-      const stream = { res, viewerId };
-      entry.streams.add(stream);
-      req.on('close', () => entry.streams.delete(stream));
-      res.write(`id: ${s.revision}\nevent: state\ndata: ${JSON.stringify(game.view(s, now(), viewerId))}\n\n`);
-      return;
-    }
-
-    if (req.method !== 'POST') return send(res, 404, { code: 'not_found' });
-    const body = await readJson(req);
-    if (!body) return send(res, 415, { code: 'json_required' });
-    const finish = (result, headers) => {
-      if (result.ok) publish(entry);
-      send(res, result.ok ? 200 : result.status, { ...result, revision: s.revision }, headers);
-    };
-
-    if (action === 'join') {
-      if (viewerId) return send(res, 200, { ok: true, revision: s.revision }); // al deelnemer
-      const participantId = randomUUID();
-      const result = game.join(s, { participantId, name: body.name, color: body.color });
-      if (!result.ok) return finish(result);
-      const token = randomBytes(24).toString('base64url');
-      entry.tokens.set(token, participantId);
-      return finish(result, { 'Set-Cookie': `${cookieName}=${token}; HttpOnly; SameSite=Lax; Path=/; Max-Age=14400` });
-    }
-    if (action === 'start') {
-      if (!safeEqual(req.headers['x-admin-token'], entry.adminToken)) return send(res, 403, { code: 'forbidden', message: 'Alleen de beheerder start.' });
-      return finish(game.start(s, now()));
-    }
-    const [kind, roundId, verb] = parts.slice(3);
-    if (kind === 'rounds' && verb === 'answer')
-      return finish(game.answer(s, { participantId: viewerId, roundId, actionId: body.actionId, answer: body.answer }, now()));
-    if (kind === 'rounds' && verb === 'choice')
-      return finish(game.choose(s, { participantId: viewerId, roundId, actionId: body.actionId, blockId: body.blockId }, now()));
-    return send(res, 404, { code: 'not_found' });
+    const r = room(parts[2]);
+    if (!r) return Response.json({ code: 'no_session', message: 'Sessie niet gevonden.' }, { status: 404 });
+    return r.fetch(request, parts.slice(3).join('/'));
   }
 
-  const server = createServer((req, res) => handle(req, res).catch(err => {
-    console.error(err);
-    if (!res.headersSent) send(res, 500, { code: 'error' });
-  }));
+  const server = createServer(async (req, res) => {
+    try {
+      const request = new Request(`http://${req.headers.host ?? 'localhost'}${req.url}`, {
+        method: req.method, headers: req.headers,
+        ...(req.method === 'GET' || req.method === 'HEAD' ? {} : { body: Readable.toWeb(req), duplex: 'half' }),
+      });
+      const response = await handle(request);
+      res.writeHead(response.status, Object.fromEntries(response.headers));
+      if (!response.body) return res.end();
+      const reader = response.body.getReader();
+      req.on('close', () => reader.cancel().catch(() => {}));
+      for (;;) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        res.write(value);
+      }
+      res.end();
+    } catch (err) {
+      console.error(err);
+      if (!res.headersSent) res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ code: 'error' }));
+    }
+  });
   const timer = tickMs ? setInterval(tick, tickMs) : null;
-  // Houd SSE-verbindingen open achter proxies die stille verbindingen sluiten.
-  const ping = setInterval(() => { for (const e of sessions.values()) for (const st of e.streams) st.res.write(': ping\n\n'); }, 15000);
+  const ping = setInterval(() => { for (const r of rooms.values()) r.ping(); }, 15000);
   server.on('close', () => { clearInterval(timer); clearInterval(ping); });
-  return { server, tick, sessions };
+  return { server, tick };
 }

@@ -12,11 +12,20 @@ const nameOf = id => state.players.find(p => p.id === id)?.name ?? '';
 const blockOf = id => state.round?.blocks.find(b => b.id === id);
 function storage(fn) { try { return fn(localStorage); } catch { return null; } }
 
+// Bij netwerkverlies hetzelfde verzoek (met dezelfde actie-id) opnieuw sturen; de server verwerkt het maar één keer.
 async function post(path, body, headers = {}) {
-  const res = await fetch(`/api/sessions${path}`, {
-    method: 'POST', headers: { 'Content-Type': 'application/json', ...headers }, body: JSON.stringify(body),
-  });
-  return res.json();
+  for (let attempt = 0; ; attempt++) {
+    try {
+      const res = await fetch(`/api/sessions${path}`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json', ...headers }, body: JSON.stringify(body),
+      });
+      return await res.json();
+    } catch {
+      if (attempt === 3) return { ok: false, message: 'Geen verbinding. Probeer het opnieuw.' };
+      $('[data-conn]').hidden = false;
+      await new Promise(r => setTimeout(r, 700 * (attempt + 1)));
+    }
+  }
 }
 
 function connect() {

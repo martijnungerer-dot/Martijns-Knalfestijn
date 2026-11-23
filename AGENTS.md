@@ -13,8 +13,9 @@ Dit project is een mobiele spelhost voor een zelfstandig begeleide training van 
 - `scripts/offline-runtime.js` zorgt voor lokale demo-opslag en pictogrammen.
 - De demo simuleert medespelers en gebruikt timers van 10, 5 en 8 seconden. Dit is geen server of echte groepssessie.
 - `tests/flow.test.cjs` controleert prototypegedrag met een gesimuleerde klok. Het zijn geen browser-, audio- of samenspeltests.
-- Gedeelde ronde (mijlpaal 1): `packages/game/engine.mjs` (spelregels, krijgt tijd als invoer), `apps/server/` (Node-HTTP, SSE, toestand in het geheugen), `apps/web/` (telefoonpagina zonder bouwstap) en `content/examples/ronde.json` (fictieve voorbeeldinhoud). Nog zonder externe pakketten; React/Fastify/SQLite uit `ARCHITECTUUR.md` zijn nog niet ingevoerd.
-- `tests/integration/` start de echte server met een nagemaakte klok en speelt met meerdere deelnemers via HTTP.
+- Gedeelde ronde: `packages/game/engine.mjs` (spelregels, krijgt tijd als invoer), `apps/server/room.mjs` (één sessie: Fetch-verzoeken, SSE, opslaan na elke wijziging), `apps/server/app.mjs` (lokale Node-server rond de kamers), `apps/worker/worker.mjs` (Cloudflare Worker; elke sessie een Durable Object met opslag en wekker), `apps/web/` (telefoonpagina zonder bouwstap) en `content/examples/ronde.json` (fictieve voorbeeldinhoud).
+- Hosting is Cloudflare Workers + Durable Objects (`wrangler.jsonc`), gekozen door Martijn. Dit vervangt Fastify/SQLite-op-schijf uit `ARCHITECTUUR.md`. React is nog niet ingevoerd. Spelregels en kamer blijven platformonafhankelijk; zet Cloudflare-specifieke code alleen in `apps/worker/`.
+- `tests/integration/` start de echte Node-server met een nagemaakte klok en speelt met meerdere deelnemers via HTTP, inclusief herstart met dezelfde opslag.
 - Overige mappen uit de voorgestelde architectuur bestaan nog niet. Maak ze pas bij de bijbehorende taak.
 
 ## Productregels
@@ -33,13 +34,15 @@ Dit project is een mobiele spelhost voor een zelfstandig begeleide training van 
 
 ## Bouwen en controleren
 
-De huidige scripts hebben Node.js 22 of nieuwer nodig en vereisen geen pakketinstallatie:
+De scripts hebben Node.js 22 of nieuwer nodig. Alleen `npm run worker` en `npm run deploy` vereisen `npm install` (wrangler); bouwen en testen niet:
 
 ```sh
 npm run build
 npm test
 npm run dev     # prototype op poort 4173
 npm start       # gedeelde-rondeserver op poort 3000 (PORT, HOST, ADMIN_KEY optioneel)
+npm run worker  # dezelfde app in de lokale Cloudflare-runtime op poort 8787
+npm run deploy  # publiceren naar Cloudflare (vereist inloggen bij Cloudflare)
 ```
 
 Na aanpassingen aan de bron: export opnieuw bouwen en de relevante tests uitvoeren. Werk instructies, lockfile en commando's bij zodra echte dependencies of de nieuwe applicaties worden toegevoegd. Voeg geen lege productiecomponenten toe om voortgang te suggereren.

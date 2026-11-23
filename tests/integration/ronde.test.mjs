@@ -9,11 +9,16 @@ const content = JSON.parse(readFileSync(new URL('../../content/examples/ronde.js
 const RIGHT = [4, 6], WRONG = [8, 9];
 
 async function setup(t) {
-  let clock = 1_000_000;
-  const app = createApp({ content, now: () => clock, adminKey: '', tickMs: 0 });
-  await new Promise(r => app.server.listen(0, '127.0.0.1', r));
-  t.after(() => { app.server.closeAllConnections(); app.server.close(); });
-  const base = `http://127.0.0.1:${app.server.address().port}`;
+  let clock = 1_000_000, app, base;
+  const store = new Map(); // blijft bestaan over een herstart heen, zoals Durable Object-opslag
+  async function boot() {
+    app = createApp({ content, now: () => clock, adminKey: '', tickMs: 0, store });
+    await new Promise(r => app.server.listen(0, '127.0.0.1', r));
+    base = `http://127.0.0.1:${app.server.address().port}`;
+  }
+  const stop = () => { app.server.closeAllConnections(); app.server.close(); };
+  await boot();
+  t.after(() => stop());
 
   async function call(method, path, body, headers = {}) {
     const res = await fetch(base + path, {
@@ -36,8 +41,10 @@ async function setup(t) {
       choose: (blockId, actionId = randomUUID()) => call('POST', `/api/sessions/${code}/rounds/r1/choice`, { actionId, blockId }, h),
     };
   }
-  const advance = ms => { clock += ms; app.tick(); };
-  return { base, call, code, admin, player, advance, start: () => call('POST', `/api/sessions/${code}/start`, {}, admin) };
+  const advance = async ms => { clock += ms; await app.tick(); };
+  // Server weg, tijd verstrijkt, nieuwe server met dezelfde opslag. De nieuwe server tikt niet uit zichzelf.
+  const restart = async downMs => { stop(); clock += downMs; await boot(); };
+  return { get base() { return base; }, call, code, admin, player, advance, restart, start: () => call('POST', `/api/sessions/${code}/start`, {}, admin) };
 }
 
 test('volledige ronde: één goed, één fout, één herlaadt; iedereen ziet dezelfde winnaar, route en fase', async t => {
@@ -60,16 +67,16 @@ test('volledige ronde: één goed, één fout, één herlaadt; iedereen ziet dez
   assert.equal(reloaded.round.chosenBlockId, 'swing');
   assert.equal(reloaded.players.find(p => p.id === reloaded.round.winnerId).name, 'Nina');
 
-  g.advance(60_000);
+  await g.advance(60_000);
   for (const p of [nina, sem, eva]) assert.equal((await p.state()).phase, 'route');
-  g.advance(30_000);
+  await g.advance(30_000);
   for (const p of [nina, sem, eva]) {
     const s = await p.state();
     assert.equal(s.phase, 'exercise');
     assert.equal(s.round.chosenBlockId, 'swing');
     assert.equal(s.walkOrder[0], s.round.winnerId);
   }
-  g.advance(120_000);
+  await g.advance(120_000);
   const end = await sem.state();
   assert.equal(end.phase, 'completed');
   const ninaScore = end.players.find(p => p.name === 'Nina');
@@ -114,13 +121,13 @@ test('timeout zonder goed antwoord: systeem kiest en de ronde loopt zelf door', 
   const g = await setup(t);
   const nina = await g.player('Nina');
   await g.start();
-  g.advance(60_000);
+  await g.advance(60_000);
   let s = await nina.state();
   assert.equal(s.phase, 'route');
   assert.equal(s.round.winnerId, null);
   assert.deepEqual([s.round.chosenBlockId, s.round.chosenBy], ['row', 'system']);
   assert.equal((await nina.answer(RIGHT)).body.code, 'closed', 'te laat antwoorden telt niet');
-  g.advance(30_000 + 120_000);
+  await g.advance(30_000 + 120_000);
   s = await nina.state();
   assert.equal(s.phase, 'completed');
 });
@@ -129,10 +136,10 @@ test('winnaar kiest niet binnen 30 seconden: systeem kiest, winnaar blijft vooro
   const g = await setup(t);
   const [nina, sem] = [await g.player('Nina'), await g.player('Sem')];
   await g.start();
-  g.advance(10_000);
+  await g.advance(10_000);
   await sem.answer(RIGHT);
   const before = (await nina.state()).round;
-  g.advance(30_000);
+  await g.advance(30_000);
   const s = await nina.state();
   assert.equal(s.phase, 'puzzle', 'de rest heeft nog puzzeltijd');
   assert.deepEqual([s.round.chosenBlockId, s.round.chosenBy], ['row', 'system']);
@@ -184,4 +191,38 @@ test('eventstream stuurt bij een wijziging de nieuwe toestand met revisie', asyn
   assert.match(next, /^id: \d+\nevent: state\n/);
   assert.match(next, /"phase":"puzzle"/);
   assert.match(next, /"me":\{/);
+});
+
+test('serverherstart: zelfde deelnemers, score en deadlines; achterstallige fases worden ingehaald', async t => {
+  const g = await setup(t);
+  const [nina, sem] = [await g.player('Nina'), await g.player('Sem')];
+  await g.start();
+  await nina.answer(RIGHT);
+  const before = (await nina.state()).round;
+
+  await g.restart(5_000); // korte uitval tijdens de keuzetijd
+  let s = await nina.state();
+  assert.equal(s.me.id, s.round.winnerId, 'cookie geldt nog na herstart');
+  assert.equal(s.players.find(p => p.name === 'Nina').points, 1);
+  assert.deepEqual([s.round.puzzleEndsAt, s.round.exerciseEndsAt], [before.puzzleEndsAt, before.exerciseEndsAt]);
+  assert.equal((await nina.answer(RIGHT)).body.code, 'already_solved');
+  assert.equal((await nina.choose('swing')).status, 200);
+
+  await g.restart(100_000); // lange uitval: puzzel en keuze zijn voorbij, oefenblok loopt al
+  s = await sem.state();
+  assert.equal(s.phase, 'exercise');
+  assert.equal(s.round.chosenBlockId, 'swing');
+  assert.equal(s.round.exerciseEndsAt, before.exerciseEndsAt, 'het einde schuift niet op');
+  assert.equal((await sem.answer(RIGHT)).body.code, 'closed');
+});
+
+test('herstart tijdens open keuze zonder keuze: systeem kiest alsnog bij de juiste deadline', async t => {
+  const g = await setup(t);
+  const nina = await g.player('Nina');
+  await g.start();
+  await nina.answer(RIGHT);
+  await g.restart(45_000); // winnaar viel weg; keuzetijd (30 s) is verlopen
+  const s = await nina.state();
+  assert.deepEqual([s.phase, s.round.chosenBlockId, s.round.chosenBy], ['puzzle', 'row', 'system']);
+  assert.equal(s.walkOrder[0], s.round.winnerId);
 });
