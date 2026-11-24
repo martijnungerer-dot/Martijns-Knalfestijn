@@ -7,3 +7,4 @@ Thumbs.db
 *.log
 .local/
 coverage/
+.wrangler/

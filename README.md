@@ -59,6 +59,18 @@ npm test
 npm run dev
 ```
 
+De gedeelde ronde draait lokaal met `npm start` (Node, poort 3000) of `npm run worker` (Cloudflare-runtime, poort 8787; vraagt eenmalig `npm install`).
+
+## Publiceren op Cloudflare
+
+De gedeelde app draait als Cloudflare Worker: de pagina's als statische bestanden, elke sessie in een eigen Durable Object met opslag en een wekker voor de deadlines. Instellingen staan in `wrangler.jsonc`.
+
+1. Cloudflare-dashboard → **Workers & Pages** → **Create** → **Import a repository** → kies `Martijns-Knalfestijn`.
+2. Build command leeg laten; deploy command: `npx wrangler deploy`.
+3. Na de deploy staat de app op `https://martijns-knalfestijn.<jouw-subdomein>.workers.dev`. Elke push naar `main` publiceert opnieuw.
+
+Zet daarna in de Worker-instellingen een geheim `ADMIN_KEY` (Settings → Variables and Secrets, type Secret). Dan vraagt de beginpagina die sleutel bij "Nieuwe sessie" en kan niet iedereen met de link sessies aanmaken. Starten kan altijd alleen de maker van de sessie.
+
 Bewerk eerst `src/prototype.html` en maak daarna de export opnieuw. `index.html` wordt bij het bouwen overschreven. De lokale server toont alleen de export op `http://127.0.0.1:4173`.
 
 De illustratie gebruikt zelfgemaakte eenvoudige poppetjes en systeememoji. Er worden geen Nintendo-personages of externe beeldbestanden meegeleverd. Muziekbestanden zijn niet inbegrepen.

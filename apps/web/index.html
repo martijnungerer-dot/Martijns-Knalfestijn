@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="referrer" content="no-referrer">
+<title>Martijns Knalfeest</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<main id="app">
+  <header class="top">
+    <strong>Knalfeest</strong>
+    <span data-conn class="conn" hidden>Verbinding herstellen…</span>
+    <button type="button" class="info" data-open-info aria-label="Spelregels">i</button>
+  </header>
+
+  <section data-view="home" hidden>
+    <h1>Martijns Knalfeest</h1>
+    <p>Open de link of QR-code van je groep om mee te doen.</p>
+    <button type="button" class="primary" data-create>Nieuwe sessie</button>
+    <label class="check"><input type="checkbox" data-demo> Demotijden (korter)</label>
+    <label data-key-label hidden>Beheersleutel <input type="password" name="admin-key" data-admin-key autocomplete="current-password"></label>
+    <p class="error" data-create-error></p>
+  </section>
+
+  <section data-view="join" hidden>
+    <h1>Doe mee</h1>
+    <form data-join-form>
+      <label>Schermnaam <input name="name" maxlength="20" autocomplete="nickname" required></label>
+      <fieldset class="colors">
+        <legend>Shirtkleur</legend>
+        <label><input type="radio" name="color" value="red" checked><span class="sw red"></span></label>
+        <label><input type="radio" name="color" value="blue"><span class="sw blue"></span></label>
+        <label><input type="radio" name="color" value="purple"><span class="sw purple"></span></label>
+        <label><input type="radio" name="color" value="green"><span class="sw green"></span></label>
+      </fieldset>
+      <button class="primary">Meedoen</button>
+      <p class="error" data-join-error></p>
+    </form>
+  </section>
+
+  <section data-view="game" hidden>
+    <ol class="ranking" data-ranking></ol>
+    <div class="map">
+      <div class="node" data-node-start>Start</div>
+      <div class="group" data-group></div>
+      <div class="fork">
+        <div class="node block" data-block="0"></div>
+        <div class="node block" data-block="1"></div>
+      </div>
+      <div class="node" data-node-end>Finish</div>
+    </div>
+    <p class="status"><span data-status></span> <span class="countdown" data-timer></span></p>
+    <div class="admin" data-admin hidden>
+      <p>Sessiecode <b data-code></b></p>
+      <p class="small">Deellink: <span data-link></span></p>
+      <button type="button" class="primary small-btn" data-start>Start</button>
+    </div>
+  </section>
+
+  <section class="overlay" data-overlay="puzzle" hidden>
+    <span class="overline">MINUUTPUZZEL</span>
+    <span class="timer" data-timer></span>
+    <h2 data-puzzle-prompt></h2>
+    <div class="numbers" data-numbers></div>
+    <button type="button" class="primary" data-submit disabled>Controleer</button>
+    <p class="small" data-puzzle-note></p>
+  </section>
+
+  <section class="overlay" data-overlay="choice" hidden>
+    <span class="overline">KIES DE ROUTE</span>
+    <span class="timer" data-timer></span>
+    <h2>Jij kiest</h2>
+    <div class="choices" data-choices></div>
+  </section>
+
+  <section class="overlay training" data-overlay="exercise" hidden>
+    <span class="overline">TRAININGSBLOK</span>
+    <h2 data-ex-name></h2>
+    <p data-ex-work></p>
+    <span class="big-timer" data-timer></span>
+  </section>
+
+  <section class="overlay" data-overlay="info" hidden>
+    <h2>Spelregels</h2>
+    <p>Goed antwoord: +1 punt en 10 munten. Je hebt 3 pogingen.</p>
+    <p>Eerste goed: rondewinst, +5 munten en 30 seconden om de route te kiezen.</p>
+    <p>Anderen kunnen hun puzzelminuut afmaken. Zonder winnaar of keuze kiest het systeem.</p>
+    <p>De rondewinnaar loopt voorop. Daarna volgt de totaalscore.</p>
+    <button type="button" class="primary" data-close-info>Terug</button>
+  </section>
+</main>
+<script type="module" src="/app.js"></script>
+</body>
+</html>
